@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import time
+import yaml
 
 # get a fixed sense of "now"
 now = int(time.time())
