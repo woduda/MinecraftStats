@@ -60,6 +60,7 @@ profile_update_interval = 86400 * args.profile_update_interval
 mcWorldDir = args.server + '/' + args.world;
 mcStatsDir = mcWorldDir + '/stats'
 mcAdvancementsDir = mcWorldDir + '/advancements'
+essentialsDataDir = args.server + '/plugins/Essentials/userdata'
 
 # sanity checks
 if not os.path.isdir(args.server):
@@ -67,6 +68,9 @@ if not os.path.isdir(args.server):
 
 if not os.path.isdir(mcStatsDir):
     handle_error('no valid stat directory: ' + mcStatsDir, True)
+
+if not os.path.isdir(essentialsDataDir):
+    handle_error('not a directory: ' + essentialsDataDir, False)
 
 dbRankingsPath = args.database + '/rankings'
 dbPlayerDataPath = args.database + '/playerdata'
@@ -143,6 +147,7 @@ hof = mcstats.Ranking()
 for uuid, player in players.items():
     # check if data file is available
     dataFilename = mcStatsDir + '/' + uuid + '.json'
+    essentialsFilename = essentialsDataDir + '/' + uuid + '.yml'
     if not os.path.isfile(dataFilename):
         # got no data for this dude
         continue
@@ -206,15 +211,20 @@ for uuid, player in players.items():
                     profile = mojang.get_player_profile(uuid)
 
                     if not profile:
-                        # unavailable, maybe the account was deleted
-                        continue
+                        skin = False
+                        try:
+                            with open(essentialsFilename) as dataFile:
+                                data = yaml.load(dataFile)
+                                player['name'] = data['lastAccountName']
+                            except:
+                                continue
+                    else:
+                        # get name
+                        player['name'] = profile['profileName']
 
-                    # get name
-                    player['name'] = profile['profileName']
-
-                    # get skin
-                    # only store suffix of url, the prefix is always the base url
-                    skin = profile['textures']['SKIN']['url'][38:]
+                        # get skin
+                        # only store suffix of url, the prefix is always the base url
+                        skin = profile['textures']['SKIN']['url'][38:]
 
                 except:
                     skin = False
