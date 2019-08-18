@@ -216,8 +216,8 @@ for uuid, player in players.items():
                             with open(essentialsFilename) as dataFile:
                                 data = yaml.load(dataFile)
                                 player['name'] = data['lastAccountName']
-                            except:
-                                continue
+                        except:
+                            continue
                     else:
                         # get name
                         player['name'] = profile['profileName']
