@@ -28,6 +28,7 @@ def create_kill_stat(mobId, title, mobText, minVersion = 0):
 create_kill_stat('blaze','Extinguisher','Blazes')
 create_kill_stat('creeper','Creeper Creep','Creepers')
 create_kill_stat('endermite','End Ratter','Endermite')
+create_kill_stat('ender_dragon','Dragon Hunter','Ender Dragons')
 create_kill_stat('ghast','Tear Drinker','Ghasts')
 create_kill_stat('magma_cube','Magma Cream','Magma Cubes')
 create_kill_stat('phantom','Phantom Shooter','Phantoms',1467) # added in 18w07a
@@ -42,6 +43,7 @@ create_kill_stat('witch','Witch Hunter','Witches')
 create_kill_stat('wither_skeleton','Wither Or Not','Wither Skeletons')
 
 # Neutrals
+create_kill_stat('bee','Beegone!','Bees',2200) # added in 19w34a
 create_kill_stat('dolphin','Dolphin Hunter','Dolphins',1482) # added in 18w15a
 create_kill_stat('enderman','Enderman Ender','Endermen')
 create_kill_stat('iron_golem','Defense Down!','Iron Golems')

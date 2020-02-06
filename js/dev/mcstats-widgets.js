@@ -5,6 +5,13 @@ formatFloat = function(value) {
     return (value != parseInt(value)) ? value.toFixed(1) : value;
 };
 
+formatDate = function(unixTime) {
+    var date = new Date();
+    date.setTime(unixTime * 1000);
+
+    return date.toLocaleDateString('en-US', {day: 'numeric', month: 'short', year: 'numeric'});
+};
+
 formatTime = function(unixTime) {
     var date = new Date();
     date.setTime(unixTime * 1000);
@@ -14,8 +21,27 @@ formatTime = function(unixTime) {
         date.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: false});
 };
 
+wordSmallInt = function(x) {
+    switch(x) {
+        case 0:  return 'zero';
+        case 1:  return 'one';
+        case 2:  return 'two';
+        case 3:  return 'three';
+        case 4:  return 'four';
+        case 5:  return 'five';
+        case 6:  return 'six';
+        case 7:  return 'seven';
+        case 8:  return 'eight';
+        case 9:  return 'nine';
+        case 10:  return 'ten';
+        case 11:  return 'eleven';
+        case 12:  return 'twelve';
+        default: return ''+x;
+    }
+};
+
 // Format an award value
-mcstats.formatValue = function(value, unit) {
+mcstats.formatValue = function(value, unit, compact = false) {
     switch(unit) {
         case 'cm':
             if(value >= 100000) {
@@ -31,27 +57,67 @@ mcstats.formatValue = function(value, unit) {
 
         case 'ticks':
             seconds = value / 20; // ticks per second
-            value = '';
-            var higher = false;
+            if(compact) {
+                // small text-based view
+                value = '';
+                var higher = false;
 
-            if(seconds > 86400) {
-                value += Math.floor(seconds / 86400) + 'd ';
-                seconds %= 86400;
-                higher = true;
+                if(seconds > 86400) {
+                    value += Math.floor(seconds / 86400) + 'd ';
+                    seconds %= 86400;
+                    higher = true;
+                }
+
+                if(higher || seconds > 3600) {
+                    value += Math.floor(seconds / 3600) + 'h ';
+                    seconds %= 3600;
+                    higher = true;
+                }
+
+                if(higher || seconds > 60) {
+                    value += Math.floor(seconds / 60) + 'min ';
+                    seconds %= 60;
+                }
+
+                value += Math.floor(seconds) + 's';
+            } else {
+                // aligned tabular view
+                var table = `<table class="time-data"><tbody><tr>`
+                var higher = false;
+
+                if(seconds > 86400) {
+                    var days = Math.floor(seconds / 86400);
+                    table += `<td class="days">${days}d</td>`
+
+                    seconds %= 86400;
+                    higher = true;
+                } else {
+                    table += `<td class="days"></td>`
+                }
+
+                if(higher || seconds > 3600) {
+                    var hours = Math.floor(seconds / 3600);
+                    table += `<td class="hours">${hours}h</td>`
+                    seconds %= 3600;
+                    higher = true;
+                } else {
+                    table += `<td class="hours"></td>`
+                }
+
+                if(higher || seconds > 60) {
+                    var minutes = Math.floor(seconds / 60);
+                    table += `<td class="minutes">${minutes}min</td>`
+
+                    seconds %= 60;
+                } else {
+                    table += `<td class="minutes"></td>`
+                }
+
+                seconds = Math.floor(seconds);
+                table += `<td class="seconds">${seconds}s</td>`;
+                table += `</tbody></table>`;
+                return table;
             }
-
-            if(higher || seconds > 3600) {
-                value += Math.floor(seconds / 3600) + 'h ';
-                seconds %= 3600;
-                higher = true;
-            }
-
-            if(higher || seconds > 60) {
-                value += Math.floor(seconds / 60) + 'min ';
-                seconds %= 60;
-            }
-
-            value += Math.floor(seconds) + 's';
             break;
 
         case 'int':
@@ -136,6 +202,17 @@ mcstats.awardWidget = function(id) {
     return `
         <img class="img-pixelated img-textsize-1_5 align-baseline" src="img/award-icons/${id}.png" alt="${id}" title="${award.title}"/>
         <a href="#award:${id}">${award.title}</a>
+    `;
+}
+
+// Create an event widget
+mcstats.eventWidget = function(id) {
+    var e = mcstats.events[id];
+    var awardId = e.link;
+    var award = mcstats.awards[id];
+    return `
+        <img class="img-pixelated img-textsize-1_5 align-baseline" src="img/award-icons/${awardId}.png" alt="${id}" title="${e.title}"/>
+        <a href="#event:${id}">${e.title}</a>
     `;
 }
 

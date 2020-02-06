@@ -8,13 +8,14 @@ loader.addRequest('data/summary.json.gz', function(summary) {
     mcstats.info = summary.info;
     mcstats.players = summary.players;
     mcstats.awards = summary.awards;
+    mcstats.events = summary.events;
     mcstats.hof = summary.hof;
 
     // fill server info
     serverName = JSON.parse('"' + mcstats.info.serverName + '"');
     serverNameNoFmt = mcstats.removeColorCodes(serverName);
 
-    document.title.innerHTML = `${serverNameNoFmt} &ndash; Stats`;
+    document.title = `${serverNameNoFmt} \u2013 Stats`;
     document.getElementById('server-name').innerHTML = mcstats.formatColorCode(serverName);
     document.getElementById('update-time').textContent = formatTime(mcstats.info.updateTime);
 
@@ -34,6 +35,23 @@ loader.addRequest('data/summary.json.gz', function(summary) {
         return mcstats.awards[a].title.localeCompare(
             mcstats.awards[b].title);
     });
+
+    // sort event keys by start time
+    for(var key in mcstats.events) {
+        if(mcstats.events[key].active) {
+            mcstats.liveEventKeysByDate.push(key);
+        } else {
+            mcstats.finishedEventKeysByDate.push(key);
+        }
+    }
+
+    mcstats.liveEventKeysByDate.sort(function(a,b) {
+        return mcstats.events[b].startTime - mcstats.events[a].startTime;
+    });
+    mcstats.finishedEventKeysByDate.sort(function(a,b) {
+        return mcstats.events[b].startTime - mcstats.events[a].startTime;
+    });
+
 }, true); // compressed!
 
 // Start
