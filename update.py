@@ -4,6 +4,7 @@ import gzip
 import json
 import math
 import os
+import random
 import re
 import shutil
 import time
@@ -198,13 +199,13 @@ for uuid, player in players.items():
     active = is_active(last)
 
     # update skin
-    if (not 'name' in player) or args.update_inactive or active:
+    if (not 'name' in player) or random.randint(0, 100) < 1 and (args.update_inactive or active):
         if 'update' in player:
             update_time = player['update']
         else:
             update_time = 0
 
-        if (not 'skin' in player) or (now - update_time > profile_update_interval):
+        if ((not 'skin' in player) or (now - update_time > profile_update_interval)):
             try:
                 print('updating profile for ' + uuid + ' ...')
                 try:
@@ -217,7 +218,9 @@ for uuid, player in players.items():
                             with open(essentialsFilename) as dataFile:
                                 data = yaml.load(dataFile)
                                 player['name'] = data['lastAccountName']
-                        except:
+                                print(player['name'])
+                        except Exception as e:
+                            handle_error(e)
                             continue
                     else:
                         # get name
