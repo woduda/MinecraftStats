@@ -9,9 +9,7 @@ import re
 import shutil
 import time
 import yaml
-
-# get a fixed sense of "now"
-now = int(time.time())
+import traceback
 
 # import custom modules
 import javaproperties
@@ -137,7 +135,9 @@ if not args.server_name:
         for line in f:
             m = p.match(line)
             if m:
-                args.server_name = javaproperties.unescape(m.group(1))
+                args.server_name = javaproperties.unescape(
+                                       m.group(1)
+                                   ).replace('\n', '<br>')
                 break
 
 # try and load usercache
@@ -316,7 +316,7 @@ for uuid, player in players.items():
         else:
             update_time = 0
 
-        if (not 'skin' in player) or (mcstats.now - update_time > profile_update_interval):
+        if (not 'name' in player) or (not 'skin' in player) or (mcstats.now - update_time > profile_update_interval):
             try:
                 print('updating profile for ' + uuid + ' ...')
                 try:
@@ -334,13 +334,9 @@ for uuid, player in players.items():
                             handle_error(e)
                             continue
                     else:
-                        # get name
-                        player['name'] = profile['profileName']
-
-                        # get skin
-                        # only store suffix of url, the prefix is always the base url
-                        skin = profile['textures']['SKIN']['url'][38:]
-
+                        # get name and skin
+                        player['name'] = profile['name']
+                        player['skin'] = profile['skin']
                 except:
                     skin = False
 
@@ -349,13 +345,17 @@ for uuid, player in players.items():
                 # profile updated
                 player['update'] = mcstats.now
 
-            except Exception as e:
-                print('failed to update profile for ' + player['name'] + ' (' + uuid + ')')
-                handle_error(e)
-                continue
+            except KeyboardInterrupt as e:
+                handle_error('cancelled', True)
 
-    # cache name
-    name = player['name']
+            except Exception as e:
+                print('failed to update profile for ' + uuid)
+                print(e)
+                # traceback.print_tb(e.__traceback__)
+
+        if (not 'name' in player) and (uuid in usercache):
+            # no profile available, but the UUID is in the usercache
+            player['name'] = usercache[uuid]
 
     # init database data
     playerStats = dict()
@@ -392,6 +392,10 @@ awards = dict()
 
 for mcstat in mcstats.registry:
     if mcstat.linkedStat:
+        continue
+
+    if serverVersion > mcstat.maxVersion:
+        # no longer supported, but don't print a warning
         continue
 
     if serverVersion < mcstat.minVersion:
@@ -483,14 +487,14 @@ for uuid, player in players.items():
         validPlayers[uuid] = player
 
         name = player['name']
-        skin = player['skin']
+        skin = player['skin'] if 'skin' in player else False
         last = player['last']
 
         serverPlayers[uuid] = {
             'name': name,
             'skin': skin,
             'last': last,
-            'update': player['update']
+            'update': player['update'] if 'update' in player else 0
         }
 
         clientInfo = {
