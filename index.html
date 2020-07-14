@@ -12,21 +12,21 @@
     </head>
     <body>
         <nav class="position-absolute navbar navbar-dark navbar-expand-sm ml-2 mt-4 p-1 round-box">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <button id="collapse-button" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarToggler">
                 <ul class="navbar-nav">
-                    <li class="nav-item px-2">
+                    <li id="tab-awards" class="nav-item px-2">
                         <a class="nav-link" href="#awards">Awards</a>
                     </li>
-                    <li class="nav-item px-2">
+                    <li id="tab-events" class="nav-item px-2" style="display: none;">
                         <a class="nav-link" href="#events">Events</a>
                     </li>
-                    <li class="nav-item px-2">
+                    <li id="tab-hof" class="nav-item px-2">
                         <a class="nav-link" href="#hof">Hall of Fame</a>
                     </li>
-                    <li class="nav-item px-2">
+                    <li id="tab-players" class="nav-item px-2">
                         <a class="nav-link" href="#players">Players</a>
                     </li>
                 </ul>
@@ -70,10 +70,20 @@
             </div>
         </div>
 
-        <script src="js/lib/pako_inflate-1.0.10.min.js"></script>
-        <script src="js/lib/jquery-3.4.1.min.js"></script>
-        <script src="js/lib/popper-1.15.0.min.js"></script>
-        <script src="js/lib/bootstrap-4.3.1.min.js"></script>
+        <script src="js/lib/pako_inflate-1.0.11.min.js"></script>
+        <script src="js/lib/bootstrap-native-3.0.9.min.js"></script>
         <script src="js/mcstats.min.js"></script>
+        <!-- development mode -->
+        <!-- <script src="js/dev/mcstats.js"></script> -->
+        <!-- <script src="js/dev/mcstats-widgets.js"></script> -->
+        <!-- <script src="js/dev/mcstats-awardlist.js"></script> -->
+        <!-- <script src="js/dev/mcstats-awardview.js"></script> -->
+        <!-- <script src="js/dev/mcstats-eventlist.js"></script> -->
+        <!-- <script src="js/dev/mcstats-eventview.js"></script> -->
+        <!-- <script src="js/dev/mcstats-playerlist.js"></script> -->
+        <!-- <script src="js/dev/mcstats-playerview.js"></script> -->
+        <!-- <script src="js/dev/mcstats-hof.js"></script> -->
+        <!-- <script src="js/dev/mcstats-loader.js"></script> -->
+        <!-- <script src="js/dev/mcstats-start.js"></script> -->
     </body>
 </html>
